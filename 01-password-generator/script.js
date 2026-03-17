@@ -10,6 +10,7 @@ const symbols = document.querySelector("#symbols");
 const indicator = document.querySelector("[dataIndicator]");
 const generateBtn = document.querySelector(".generateBtn");
 const allCheckBox = document.querySelectorAll("input[type=checkbox]");
+const symbol = "!@#$%^&*()_+-={}[]|:;<>,.?/~`";
 
 let password = "";
 let passwordLength =10;
@@ -41,5 +42,20 @@ function generateUpperCase(){
    return String.fromCharCode( getRandomInteger(65,91))
 }
 function generateSymbol(){
-    return 
+    const randomNum = getRandomInteger(0, symbol.length);
+    return symbol.charAt(randomNum);
+}
+function calcStrength(){
+    let hasUpper = uppercase.checked;
+    let hasLower = lowercase.checked;
+    let hasNum = numbers.checked;
+    let hasSym = symbols.checked;
+    if(hasUpper && hasLower && (hasNum || hasSym) && passwordLength >= 8){
+        setIndicator("#0f0");
+    }
+    else if (hasUpper && hasLower && (hasNum || hasSym) && passwordLength >= 6){
+        setIndicator("#ff0");
+    }else{
+        setIndicator("#0f00");
+    }
 }
