@@ -14,10 +14,10 @@ const symbol = "!@#$%^&*()_+-={}[]|:;<>,.?/~`";
 
 let password = "";
 let passwordLength =10;
-let checkCount = 1;
+let checkCount=0;
+
 
 handleSlider();
-
 function handleSlider(){
     inputSlider.value = passwordLength;
     lengthDisplay.innerText = passwordLength;
@@ -45,6 +45,26 @@ function generateSymbol(){
     const randomNum = getRandomInteger(0, symbol.length);
     return symbol.charAt(randomNum);
 }
+//check box logic
+function handleCheckBoxes(){
+    checkCount=0;
+    allCheckBox.forEach((checkbox)=>{
+        if(checkbox.checked)
+        checkCount++;
+    else return;      
+    })
+    //special condition
+    if(passwordLength<checkCount){{
+        passwordLength=checkCount;
+        handleSlider();
+    }
+}
+}
+
+allCheckBox.forEach((checkbox)=>{
+    checkbox.addEventListener("change",handleCheckBoxes)
+})
+//Logic for calculating strength of password
 function calcStrength(){
     let hasUpper = uppercase.checked;
     let hasLower = lowercase.checked;
@@ -56,6 +76,70 @@ function calcStrength(){
     else if (hasUpper && hasLower && (hasNum || hasSym) && passwordLength >= 6){
         setIndicator("#ff0");
     }else{
-        setIndicator("#0f00");
+        setIndicator("#f00");
     }
 }
+async function copyContent(){
+   try {
+     await navigator.clipboard.writeText(passwordDisplay.value);
+     copyMessage.innerText = "Copied!";
+     copyMessage.style.backgroundColor="lightGreen";
+    
+   } catch (e) {
+    copyMessage.innerText = "Failed";
+    copyMessage.style.backgroundColor
+   }
+    copyMessage.addClassList.add("active")
+     setTimeout(()=>{
+        copyMessage.classList.remove("active")
+     },2000)
+ 
+
+}
+
+//Main function to generate password
+
+    inputSlider.addEventListener("input",(e)=>{
+        passwordLength=e.target.value;
+        
+        handleSlider();
+        //console.log(passwordLength);
+    })
+    copyBtn.addEventListener("click",()=>{
+        if(passwordDisplay.value) 
+            copyContent();
+        else{
+            // setTimeout(()=>{
+            //     copyMessage.innerText = "Nothing to copy";
+            //     copyMessage.style.backgroundColor = "lightcoral";
+
+            // },2000)
+            
+        }
+
+        
+    })
+//Main Function to generate password
+
+    generateBtn.addEventListener("click", () => {
+    if (checkCount === 0) {
+        return;
+        
+
+
+
+
+        //Further implementation of showing error message to select at least one checkbox
+        // const errorMessage = document.createElement("h1");
+        // errorMessage.innerText = "Please select at least one checkbox";
+        // errorMessage.style.color = "lightcoral";
+
+        // document.body.appendChild(errorMessage); // temporary test
+
+        // setTimeout(() => {
+        //     errorMessage.remove();
+        // }, 2000);
+    }
+});
+
+    
