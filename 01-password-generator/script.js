@@ -25,7 +25,7 @@ function handleSlider(){
 
 //Strength Indicator
 function setIndicator(){
-    indicator.style.backgroundColor=color;
+    indicator.style.backgroundColor="gray";
 }
 
 function getRandomInteger(min,max){
@@ -64,6 +64,25 @@ function handleCheckBoxes(){
 allCheckBox.forEach((checkbox)=>{
     checkbox.addEventListener("change",handleCheckBoxes)
 })
+
+function shufflePassword(shufflePassword){
+    //Fisher Yates Method
+    for(let i=shufflePassword.length-1;i>0;i--){
+        const j = Math.floor(Math.random()*(i+1));
+        const temp = shufflePassword[i];
+        shufflePassword[i]=shufflePassword[j];
+        shufflePassword[j]=temp;
+    }
+    let str="";
+    shufflePassword.forEach((el)=>{
+        str+=el;
+    }
+    )
+    return str;
+
+
+}
+
 //Logic for calculating strength of password
 function calcStrength(){
     let hasUpper = uppercase.checked;
@@ -82,17 +101,24 @@ function calcStrength(){
 async function copyContent(){
    try {
      await navigator.clipboard.writeText(passwordDisplay.value);
+    
      copyMessage.innerText = "Copied!";
      copyMessage.style.backgroundColor="lightGreen";
     
    } catch (e) {
     copyMessage.innerText = "Failed";
-    copyMessage.style.backgroundColor
+    copyMessage.style.backgroundColor="pink";
    }
-    copyMessage.addClassList.add("active")
-     setTimeout(()=>{
-        copyMessage.classList.remove("active")
-     },2000)
+   setTimeout(() => {
+       copyMessage.innerText = "";
+       copyMessage.style.backgroundColor = "";
+   }, 2000);
+
+   //After The CSS Addition
+    // copyMessage.classList.add("active")
+    //  setTimeout(()=>{
+    //     copyMessage.classList.remove("active")
+    //  },2000)
  
 
 }
@@ -126,9 +152,6 @@ async function copyContent(){
         return;
         
 
-
-
-
         //Further implementation of showing error message to select at least one checkbox
         // const errorMessage = document.createElement("h1");
         // errorMessage.innerText = "Please select at least one checkbox";
@@ -140,6 +163,41 @@ async function copyContent(){
         //     errorMessage.remove();
         // }, 2000);
     }
+    if(passwordLength<checkCount)
+{
+    passwordLength=checkCount;
+    handleSlider();
+}  //Main logic to generate password
+
+    //remove old password
+    password="";
+    // if(uppercase.checked)password+=generateUpperCase();
+    // if(lowercase.checked)password+=generateLowerCase();
+    // if(numbers.checked)password+=getRandomNumber();
+    // if(symbols.checked)password+=generateSymbol();
+
+    //Alternative Logic
+    let funcArr=[];
+    if(uppercase.checked) funcArr.push(generateUpperCase);
+    if(lowercase.checked) funcArr.push(generateLowerCase);
+    if(numbers.checked) funcArr.push(getRandomNumber);
+    if(symbols.checked) funcArr.push(generateSymbol);   
+
+    for(let i=0;i<funcArr.length;i++){
+        password+=funcArr[i]();
+    }
+    for(let i=0;i<passwordLength-funcArr.length;i++){
+        let randIndex = getRandomInteger(0,funcArr.length);
+        password+=funcArr[randIndex]();
+    }
+
+    //shuffle the password
+    password=shufflePassword(Array.from(password));
+
+    //Show in UI 
+    passwordDisplay.value=password;
+    //Show the strength
+    calcStrength();
 });
 
     
